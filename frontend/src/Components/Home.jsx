@@ -55,7 +55,7 @@ const Home = () => {
     console.log(price)
     return (
         <>
-            <MetaData title={'Buy Best Products Online'} />
+            <MetaData title={'ShoeMan'} />
             {loading ? <Loader /> : (<div className="container container-fluid">
                 <h1 id="products_heading">Latest Products</h1>
                 <section id="products" className="container mt-5">

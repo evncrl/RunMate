@@ -84,9 +84,11 @@ const Register = () => {
 
         } catch (error) {
             setLoading(false)
-            setUser(null)
-            setError(error.response.data.message)
-            console.log(error.response.data.message)
+            // Do not set user to null — the component destructures `user` at render time.
+            // Reset to an empty user object instead to avoid runtime crashes.
+            setUser({ name: '', email: '', password: '' })
+            setError(error?.response?.data?.message || error.message)
+            console.log(error?.response?.data?.message || error.message)
         }
     }
 
