@@ -6,32 +6,78 @@ const cloudinary = require('cloudinary')
 const sendEmail = require('../utils/sendEmail')
 
 exports.registerUser = async (req, res, next) => {
-console.log(req.body)
-    const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
-        folder: 'avatars',
-        width: 150,
-        crop: "scale"
-    }, (err, res) => {
-        console.log(err, res);
-    });
-    const { name, email, password, } = req.body;
-    const user = await User.create({
-        name,
-        email,
-        password,
-        avatar: {
-            public_id: result.public_id,
-            url: result.secure_url
-        },
-    })
+    console.log('register payload:', { body: req.body, file: req.file && { originalname: req.file.originalname, mimetype: req.file.mimetype } });
+    try {
+        // Cloudinary upload can accept a data URI (base64) or a file path/stream. Support both.
+        let uploadTarget = null;
+        if (req.file && req.file.path) {
+            uploadTarget = req.file.path; // multer saved a temporary file
+        } else if (req.body.avatar) {
+            uploadTarget = req.body.avatar; // maybe a base64 data URI or a front-end path
+        }
+
+        let result = { public_id: 'default_avatar', secure_url: '/images/default_avatar.jpg' };
+
+        // If uploadTarget appears to be a real upload (data URI or an absolute/http URL or a file path), try uploading.
+        const looksLikeDataUri = typeof uploadTarget === 'string' && uploadTarget.startsWith('data:');
+        const looksLikeHttpUrl = typeof uploadTarget === 'string' && (uploadTarget.startsWith('http://') || uploadTarget.startsWith('https://'));
+        const looksLikeFrontendPath = typeof uploadTarget === 'string' && uploadTarget.startsWith('/images/');
+
+        if (uploadTarget && (looksLikeDataUri || looksLikeHttpUrl || req.file && req.file.path)) {
+            // Only attempt Cloudinary upload for actual data URIs, http(s) URLs, or real file paths from multer
+            result = await cloudinary.v2.uploader.upload(uploadTarget, {
+                folder: 'avatars',
+                width: 150,
+                crop: 'scale',
+            });
+        } else if (looksLikeFrontendPath) {
+            // The frontend sent a local/frontend path (e.g. '/images/default_avatar.jpg') — use it as-is
+            result = { public_id: 'default_avatar', secure_url: uploadTarget };
+        }
+
+        const { name, email, password } = req.body;
+
+        // Basic validation: ensure required fields are present
+        if (!name || !email || !password) {
+            return res.status(400).json({ success: false, message: 'Name, email and password are required' });
+        }
+
+        const user = await User.create({
+            name,
+            email,
+            password,
+            avatar: {
+                public_id: result.public_id,
+                url: result.secure_url,
+            },
+        });
     //test token
     const token = user.getJwtToken();
 
     return res.status(201).json({
         success: true,
         user,
-        token
-    })
+        token,
+    });
+    } catch (err) {
+        // Duplicate key (email already exists)
+        if (err && err.code === 11000) {
+            const field = Object.keys(err.keyValue || {}).join(', ');
+            const message = field ? `${field} already exists` : 'Duplicate key error';
+            console.error('registerUser duplicate error:', message);
+            return res.status(400).json({ success: false, message });
+        }
+
+        // Mongoose validation errors
+        if (err && err.name === 'ValidationError') {
+            const messages = Object.values(err.errors).map(e => e.message).join(', ');
+            console.error('registerUser validation error:', messages);
+            return res.status(400).json({ success: false, message: messages });
+        }
+
+        console.error('registerUser error:', err && err.message ? err.message : err);
+        return res.status(500).json({ success: false, message: err.message || 'Server Error' });
+    }
     // sendToken(user, 200, res)
 }
 
@@ -85,7 +131,7 @@ exports.forgotPassword = async (req, res, next) => {
     try {
         await sendEmail({
             email: user.email,
-            subject: 'ShopIT Password Recovery',
+            subject: 'RunMate Password Recovery',
             message
         })
 
