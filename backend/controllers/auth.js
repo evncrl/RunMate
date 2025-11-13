@@ -23,13 +23,18 @@ exports.registerUser = async (req, res, next) => {
         const looksLikeHttpUrl = typeof uploadTarget === 'string' && (uploadTarget.startsWith('http://') || uploadTarget.startsWith('https://'));
         const looksLikeFrontendPath = typeof uploadTarget === 'string' && uploadTarget.startsWith('/images/');
 
-        if (uploadTarget && (looksLikeDataUri || looksLikeHttpUrl || req.file && req.file.path)) {
+        if (uploadTarget && (looksLikeDataUri || looksLikeHttpUrl || (req.file && req.file.path))) {
             // Only attempt Cloudinary upload for actual data URIs, http(s) URLs, or real file paths from multer
-            result = await cloudinary.v2.uploader.upload(uploadTarget, {
-                folder: 'avatars',
-                width: 150,
-                crop: 'scale',
-            });
+            // But make sure Cloudinary credentials are configured; otherwise skip upload and use default avatar
+            if (process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET && process.env.CLOUDINARY_CLOUD_NAME) {
+                result = await cloudinary.v2.uploader.upload(uploadTarget, {
+                    folder: 'avatars',
+                    width: 150,
+                    crop: 'scale',
+                });
+            } else {
+                console.warn('Cloudinary credentials not found — skipping upload and using default avatar. Set CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME in .env to enable uploads.');
+            }
         } else if (looksLikeFrontendPath) {
             // The frontend sent a local/frontend path (e.g. '/images/default_avatar.jpg') — use it as-is
             result = { public_id: 'default_avatar', secure_url: uploadTarget };
