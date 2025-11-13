@@ -77,10 +77,12 @@ const Register = () => {
 
             const { data } = await axios.post(`http://localhost:5000/api/v1/register`, userData, config)
             console.log(data.user)
-           
+
             setLoading(false)
-            setUser(data.user)
-            navigate('/')
+            // clear the form state — user should login after registering
+            setUser({ name: '', email: '', password: '' })
+            // redirect to login so the user can sign in
+            navigate('/login')
 
         } catch (error) {
             setLoading(false)

@@ -4,7 +4,7 @@ import MetaData from '../Layout/MetaData'
 import { Carousel } from 'react-bootstrap'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getUser, getToken, successMsg, errMsg } from '../../utils/helpers'
+import { getUser, getToken, successMsg, errMsg } from '../../Utils/helpers'
 import ListReviews from '../Review/ListReviews';
 
 

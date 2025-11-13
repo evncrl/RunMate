@@ -6,7 +6,7 @@ import MetaData from '../Layout/MetaData';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { authenticate, getUser } from '../../utils/helpers';
+import { authenticate, getUser } from '../../Utils/helpers';
 
 const Login = () => {
     const [email, setEmail] = useState('');

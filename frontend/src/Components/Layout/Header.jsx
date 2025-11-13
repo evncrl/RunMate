@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Search from './Search'
-import { getUser, logout } from '../../utils/helpers'
+import { getUser, logout } from '../../Utils/helpers'
 
 const Header = ({ cartItems }) => {
     const [user, setUser] = useState(null)

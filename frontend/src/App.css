@@ -27,12 +27,14 @@ body {
 }
 
 nav {
-  background-color: #232f3e;
+  background-color: transparent;
   padding: 1rem 1rem;
+  border-bottom: 1px solid #232f3e;
 }
 
 #search_btn {
-  background-color: #febd69;
+  background-color: #000000;
+  color: white;
 }
 
 .input-group {
@@ -47,14 +49,15 @@ nav {
 
 #login_btn,
 #view_btn {
-  background-color: #febd69;
+  background-color: hsl(0, 0%, 9%);
   padding: 0.4rem 1.8rem;
   font-family: calibri;
+  color: white;
 }
 
 #cart {
   font-size: 1rem;
-  color: white;
+  color: black;
 }
 
 #cart_count {
@@ -307,7 +310,7 @@ footer {
 }
 
 .wrapper form .btn {
-  background-color: #fa9c23;
+  background-color: #252525;
   border-color: #fa9c23;
   color: white;
   margin-top: 2.5rem;
@@ -545,6 +548,14 @@ a[data-toggle='collapse'] {
   top: 50%;
   right: 20px;
   transform: translateY(-50%);
+}
+
+.dropdown-toggle {
+  color: black !important;
+}
+
+.dropdown-menu a {
+  color: black !important;
 }
 
 ul ul a {
