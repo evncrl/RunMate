@@ -6,7 +6,7 @@ import Loader from '../Layout/Loader'
 import Sidebar from './SideBar'
 // import Toast from '../Layout/Toast'
 import Swal from 'sweetalert2'
-import { getUser, getToken, errMsg } from '../../Utils/helpers'
+import { getUser, getToken, errMsg } from '../../utils/helpers'
 import axios from 'axios'
 import { DataGrid, } from '@mui/x-data-grid'
 

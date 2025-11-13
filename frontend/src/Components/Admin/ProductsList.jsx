@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import MetaData from '../Layout/MetaData'
 import Loader from '../Layout/Loader'
 import Sidebar from './SideBar'
-import { getToken } from '../../Utils/helpers';
+import { getToken } from '../../utils/helpers';
 import axios from 'axios'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

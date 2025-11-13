@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import { Navigate } from 'react-router-dom'
 
 import Loader from '../Layout/Loader'
-import { getUser } from '../../Utils/helpers'
+import { getUser } from '../../utils/helpers'
 
 const ProtectedRoute = ({ children, isAdmin = false }) => {
     const [loading, setLoading] = useState(getUser() === false && false )

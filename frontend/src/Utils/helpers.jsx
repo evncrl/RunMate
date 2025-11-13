@@ -7,6 +7,12 @@ export const authenticate = (data, next) => {
         sessionStorage.setItem('token', JSON.stringify(data.token));
         sessionStorage.setItem('user', JSON.stringify(data.user));
     }
+    // Notify other parts of the app that auth changed (so header can update without refresh)
+    try {
+        window.dispatchEvent(new Event('authChanged'));
+    } catch (e) {
+        // ignore if dispatch fails in non-browser env
+    }
     next();
 };
 
@@ -27,6 +33,9 @@ export const logout = next => {
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('user');
     }
+    try {
+        window.dispatchEvent(new Event('authChanged'));
+    } catch (e) {}
     next();
 };
 

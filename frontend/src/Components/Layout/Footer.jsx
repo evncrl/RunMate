@@ -5,7 +5,7 @@ const Footer = () => {
         <>
             <footer className="py-1">
                 <p className="text-center mt-1">
-                    RunMate
+                    RunMate - Takbo Hanggang ma-Tegi
                 </p>
             </footer></>
 

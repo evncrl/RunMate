@@ -10,11 +10,12 @@ import Search from './Search'
 import { getUser, logout } from '../../utils/helpers'
 
 const Header = ({ cartItems }) => {
-    const [user, setUser] = useState({})
+    const [user, setUser] = useState(null)
     const navigate = useNavigate()
 
     const logoutHandler = () => {
-        logout(navigate('/'));
+        // pass a callback to logout so it can perform cleanup then navigate
+        logout(() => navigate('/'));
 
         toast.success('log out', {
             position: 'bottom-right'
@@ -22,7 +23,13 @@ const Header = ({ cartItems }) => {
     }
 
     useEffect(() => {
-        setUser(getUser())
+        // set initial user on mount
+        setUser(getUser());
+
+        // update user whenever auth changes (login/logout)
+        const handler = () => setUser(getUser());
+        window.addEventListener('authChanged', handler);
+        return () => window.removeEventListener('authChanged', handler);
     }, []);
 
     return (
@@ -48,8 +55,8 @@ const Header = ({ cartItems }) => {
                         <Link to="#!" className="btn dropdown-toggle text-white mr-4" type="button" id="dropDownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <figure className="avatar avatar-nav">
                                 <img
-                                    src={user.avatar && user.avatar.url}
-                                    alt={user && user.name}
+                                    src={user?.avatar?.url || '/images/default_avatar.jpg'}
+                                    alt={user?.name || 'User'}
                                     className="rounded-circle"
                                 />
                             </figure>
@@ -71,11 +78,12 @@ const Header = ({ cartItems }) => {
                         </div>
                     </div>) : <Link to="/login" className="btn ml-4" id="login_btn">Login</Link>}
 
-                    <Link to="/cart" style={{ textDecoration: 'none' }} >
-                        <span id="cart" className="ml-3">Cart</span>
-                        <span className="ml-1" id="cart_count">{cartItems ? cartItems.length : null}</span>
-                        {/* <span className="ml-1" id="cart_count">2</span> */}
-                    </Link>
+                    {user && (
+                        <Link to="/cart" style={{ textDecoration: 'none' }} >
+                            <span id="cart" className="ml-3">Cart</span>
+                            <span className="ml-1" id="cart_count">{cartItems ? cartItems.length : null}</span>
+                        </Link>
+                    )}
                     {/* <span className="ml-1" id="cart_count">{cartItems ? cartItems.length : null}</span>  */}
                 </div>
 

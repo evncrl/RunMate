@@ -10,7 +10,7 @@ import {
     ResponsiveContainer,
     Cell,
 } from "recharts";
-import { getToken } from "../../Utils/helpers";
+import { getToken } from "../../utils/helpers";
 import axios from "axios";
 import Loader from '../Layout/Loader';
 

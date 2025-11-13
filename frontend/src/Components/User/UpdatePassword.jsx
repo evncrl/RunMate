@@ -4,7 +4,7 @@ import MetaData from '../Layout/MetaData';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { getToken } from '../../Utils/helpers'
+import { getToken } from '../../utils/helpers'
 
 
 
